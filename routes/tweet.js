@@ -20,7 +20,7 @@ router.post('/tweet', (req, res) => {
         content: req.body.content,
         date: new Date(),
         user: mongoose.Types.ObjectId(req.body.user.trim()),
-        isLiked: mongoose.Types.ObjectId(req.body.user.trim()),
+        isLiked: [],
       });
 
       newUser.save().then(newDoc => {
@@ -38,6 +38,16 @@ router.post('/like:token', (req, res) => {
   Tweet.findOne({ token: req.params.token }).then(data => {
     if (data) {
       res.json({ result: true, canDeleteTask: data.canDeleteTask });
+    } else {
+      res.json({ result: false, error: 'User not found' });
+    }
+  });
+});
+
+router.put('/like', (req, res) => {
+  Tweet.findOneAndUpdate({ isLiked: req.body.user }).then(data => {
+    if (data) {
+      res.json({ result: true, tweetLike: data });
     } else {
       res.json({ result: false, error: 'User not found' });
     }
